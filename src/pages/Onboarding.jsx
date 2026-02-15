@@ -11,7 +11,7 @@ export function setOnboardingComplete() {
 export function isNewUser() {
   try {
     return localStorage.getItem(ONBOARDING_KEY) !== 'true';
-  } catch (_) {
+  } catch {
     return true;
   }
 }
@@ -26,36 +26,36 @@ export default function Onboarding({ onComplete }) {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[#fef7f5] px-6 pt-12 pb-10">
+    <div className="flex min-h-dvh flex-col bg-[var(--bg-app)] px-6 pt-16 pb-12">
       <div className="flex flex-1 flex-col items-center justify-center text-center">
-        <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-white text-5xl shadow-sm ring-2 ring-rose-100">
+        <div className="mb-10 flex h-28 w-28 items-center justify-center rounded-full bg-white text-5xl shadow-[var(--shadow-soft)] ring-1 ring-[var(--border)]">
           🌸
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-stone-800">
+        <h1 className="text-display text-[var(--text-primary)]">
           Hey there
         </h1>
-        <p className="mt-3 max-w-[280px] text-base leading-relaxed text-stone-600">
+        <p className="mt-4 max-w-[300px] text-body text-[var(--text-secondary)]">
           Track your cycle, log how you feel, and see when your next period is likely.
         </p>
-        <ul className="mt-8 flex flex-col gap-4 text-left text-sm text-stone-600">
-          <li className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">📅</span>
-            View predictions on the calendar
+        <ul className="mt-10 flex flex-col gap-5 text-left">
+          <li className="flex items-center gap-4">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-rose-500">📅</span>
+            <span className="text-body text-[var(--text-secondary)]">View predictions on the calendar</span>
           </li>
-          <li className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">➕</span>
-            Log when you get your period or log symptoms
+          <li className="flex items-center gap-4">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-rose-500">➕</span>
+            <span className="text-body text-[var(--text-secondary)]">Log when you get your period or log symptoms</span>
           </li>
-          <li className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">🏠</span>
-            See your cycle day and phase on the home screen
+          <li className="flex items-center gap-4">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-rose-500">🏠</span>
+            <span className="text-body text-[var(--text-secondary)]">See your cycle day and phase on the home screen</span>
           </li>
         </ul>
       </div>
       <button
         type="button"
         onClick={handleGetStarted}
-        className="w-full rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 py-4 text-lg font-bold text-white shadow-lg shadow-rose-300/30 transition active:scale-[0.99]"
+        className="w-full rounded-[var(--radius-lg)] bg-gradient-to-br from-rose-500 to-rose-600 py-4 text-body font-semibold text-white shadow-[var(--shadow-card)] transition hover:from-rose-600 hover:to-rose-700 active:scale-[0.99]"
       >
         Get started
       </button>

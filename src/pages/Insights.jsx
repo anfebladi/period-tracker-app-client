@@ -1,3 +1,6 @@
+import { useState, useEffect } from 'react';
+import api from '../api.js';
+
 const SEVERITY_LABELS = {
   '1': 'Mild',
   '2': 'Moderate',
@@ -5,20 +8,6 @@ const SEVERITY_LABELS = {
   '4': 'Strong',
   '5': 'Very strong',
 };
-
-// Fake data for now – replace with API fetch when ready
-const FAKE_LOGS = [
-  { id: 1, symptomname: 'Cramps', severity: '3', created_at: '2025-02-10T14:00:00' },
-  { id: 2, symptomname: 'Headache', severity: '2', created_at: '2025-02-10T09:30:00' },
-  { id: 3, symptomname: 'Fatigue', severity: '4', created_at: '2025-02-09T18:00:00' },
-  { id: 4, symptomname: 'Mood', severity: '2', created_at: '2025-02-09T12:00:00' },
-  { id: 5, symptomname: 'Bloating', severity: '3', created_at: '2025-02-08T10:00:00' },
-  { id: 6, symptomname: 'Cramps', severity: '4', created_at: '2025-02-08T08:00:00' },
-  { id: 7, symptomname: 'Back pain', severity: '2', created_at: '2025-02-07T16:00:00' },
-  { id: 8, symptomname: 'Cramps', severity: '2', created_at: '2025-02-07T09:00:00' },
-  { id: 9, symptomname: 'Headache', severity: '1', created_at: '2025-02-06T14:00:00' },
-  { id: 10, symptomname: 'Breast tenderness', severity: '2', created_at: '2025-02-05T11:00:00' },
-];
 
 function formatDate(str) {
   if (!str) return '—';
@@ -35,7 +24,29 @@ function formatDateKey(str) {
 }
 
 export default function Insights() {
-  const logs = FAKE_LOGS;
+  const [logs, setLogs] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchLogs() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await api.get('/logs');
+        if (!cancelled) setLogs(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.response?.data?.error ?? err.message ?? 'Could not load logs.');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    fetchLogs();
+    return () => { cancelled = true; };
+  }, []);
 
   const byDate = (logs || []).reduce((acc, entry) => {
     const key = formatDateKey(entry.created_at ?? entry.date ?? entry.logged_at) || 'no-date';
@@ -60,56 +71,70 @@ export default function Insights() {
 
   const topSymptom = Object.entries(symptomCounts).sort((a, b) => b[1] - a[1])[0];
 
+  if (loading) {
+    return (
+      <div className="mx-auto min-h-full max-w-lg px-6 pt-8 pb-8">
+        <p className="text-center text-body text-[var(--text-muted)]">Loading…</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto min-h-full max-w-lg px-6 pt-8 pb-8">
+        <p className="rounded-[var(--radius-sm)] bg-[var(--accent-soft)] px-4 py-3 text-caption text-rose-600">{error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto min-h-full max-w-lg px-5 pt-6 pb-8">
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-stone-800">Your data</h1>
-        <p className="mt-1 text-sm text-stone-500">Symptom logs over time</p>
+    <div className="mx-auto min-h-full max-w-lg px-6 pt-8 pb-8">
+      <header className="mb-8">
+        <h1 className="text-title text-[var(--text-primary)]">Your data</h1>
+        <p className="mt-2 text-body text-[var(--text-secondary)]">Symptom logs over time</p>
       </header>
 
       {(logs == null || logs.length === 0) ? (
-        <div className="rounded-2xl border border-rose-100 bg-white p-8 text-center">
+        <div className="rounded-[var(--radius-xl)] border border-[var(--border)] bg-white p-12 text-center shadow-[var(--shadow-soft)]">
           <p className="text-5xl">📋</p>
-          <p className="mt-3 font-medium text-stone-600">No logs yet</p>
-          <p className="mt-1 text-sm text-stone-400">Log symptoms from the + tab to see them here.</p>
+          <p className="mt-4 text-body font-medium text-[var(--text-secondary)]">No logs yet</p>
+          <p className="mt-2 text-caption text-[var(--text-muted)]">Log symptoms from the + tab to see them here.</p>
         </div>
       ) : (
         <>
-          {/* Summary cards */}
-          <section className="mb-6 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-rose-100 bg-white p-4 shadow-sm">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total logs</p>
-              <p className="mt-1 text-2xl font-bold text-stone-800">{logs.length}</p>
+          <section className="mb-8 grid grid-cols-2 gap-4">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-soft)]">
+              <p className="text-label text-[var(--text-muted)]">Total logs</p>
+              <p className="mt-1.5 text-title text-[var(--text-primary)]">{logs.length}</p>
             </div>
             {topSymptom && (
-              <div className="rounded-2xl border border-rose-100 bg-white p-4 shadow-sm">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Most logged</p>
-                <p className="mt-1 text-lg font-bold text-stone-800 capitalize">{topSymptom[0]}</p>
-                <p className="text-xs text-stone-500">{topSymptom[1]} time{topSymptom[1] !== 1 ? 's' : ''}</p>
+              <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-soft)]">
+                <p className="text-label text-[var(--text-muted)]">Most logged</p>
+                <p className="mt-1.5 text-body font-semibold text-[var(--text-primary)] capitalize">{topSymptom[0]}</p>
+                <p className="text-caption text-[var(--text-secondary)]">{topSymptom[1]} time{topSymptom[1] !== 1 ? 's' : ''}</p>
               </div>
             )}
           </section>
 
-          {/* Severity breakdown */}
           {Object.keys(severityCounts).length > 0 && (
-            <section className="mb-6">
-              <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-stone-500">By severity</h2>
-              <div className="rounded-2xl border border-rose-100 bg-white p-4 shadow-sm">
-                <div className="space-y-2">
+            <section className="mb-8">
+              <h2 className="text-label mb-3 text-[var(--text-muted)]">By severity</h2>
+              <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-soft)]">
+                <div className="space-y-3">
                   {Object.entries(severityCounts)
                     .sort((a, b) => b[1] - a[1])
                     .map(([sev, count]) => (
                       <div key={sev} className="flex items-center gap-3">
-                        <span className="w-24 text-sm text-stone-600">
+                        <span className="w-28 text-body text-[var(--text-secondary)]">
                           {SEVERITY_LABELS[sev] ?? `Level ${sev}`}
                         </span>
-                        <div className="flex-1 h-2 rounded-full bg-rose-100 overflow-hidden">
+                        <div className="flex-1 h-2 rounded-full bg-[var(--accent-soft)] overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-rose-500"
+                            className="h-full rounded-full bg-rose-500 transition-all"
                             style={{ width: `${(count / logs.length) * 100}%` }}
                           />
                         </div>
-                        <span className="text-sm font-semibold text-stone-700 w-6">{count}</span>
+                        <span className="text-body font-semibold text-[var(--text-primary)] w-6">{count}</span>
                       </div>
                     ))}
                 </div>
@@ -117,22 +142,21 @@ export default function Insights() {
             </section>
           )}
 
-          {/* Logs by date */}
           <section>
-            <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-stone-500">Logs by date</h2>
+            <h2 className="text-label mb-3 text-[var(--text-muted)]">Logs by date</h2>
             <div className="space-y-4">
               {sortedDates.map((dateKey) => (
-                <div key={dateKey} className="rounded-2xl border border-rose-100 bg-white shadow-sm overflow-hidden">
-                  <div className="bg-rose-50/50 px-4 py-2 text-xs font-bold uppercase tracking-wider text-stone-500">
+                <div key={dateKey} className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-white shadow-[var(--shadow-soft)] overflow-hidden">
+                  <div className="bg-[var(--bg-app)] px-4 py-2.5 text-label text-[var(--text-muted)]">
                     {dateKey === 'no-date' ? 'No date' : formatDate(dateKey)}
                   </div>
-                  <ul className="divide-y divide-rose-50">
+                  <ul className="divide-y divide-[var(--border)]">
                     {(byDate[dateKey] || []).map((entry, i) => (
-                      <li key={entry.id ?? `${dateKey}-${i}`} className="flex items-center justify-between px-4 py-3">
-                        <span className="font-medium text-stone-800 capitalize">
+                      <li key={entry.id ?? `${dateKey}-${i}`} className="flex items-center justify-between px-4 py-3.5">
+                        <span className="text-body font-medium text-[var(--text-primary)] capitalize">
                           {entry.symptomname ?? entry.symptom_name ?? '—'}
                         </span>
-                        <span className="rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-semibold text-rose-700">
+                        <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-caption font-semibold text-rose-600">
                           {SEVERITY_LABELS[String(entry.severity)] ?? entry.severity}
                         </span>
                       </li>
