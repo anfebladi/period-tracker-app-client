@@ -54,7 +54,10 @@ export default function Setup({ onComplete, title = 'Set up your cycle' }) {
         navigate('/', { replace: true });
       }
     } catch (err) {
-      const msg = err.response?.data?.error ?? err.message ?? 'Could not save.';
+      const status = err?.response?.status;
+      let msg = err?.response?.data?.error ?? err.message ?? 'Could not save.';
+      if (status === 500 || status >= 500)
+        msg += ' Make sure the backend is running (node app.js in period-tracker-app).';
       setError(msg);
     } finally {
       setSaving(false);
@@ -62,7 +65,7 @@ export default function Setup({ onComplete, title = 'Set up your cycle' }) {
   };
 
   return (
-    <div className="mx-auto min-h-dvh max-w-lg bg-[var(--bg-app)] px-6 pt-12 pb-12">
+    <div className="mx-auto min-h-dvh max-w-lg px-6 pt-12 pb-12">
       <header className="mb-10">
         <h1 className="text-title text-[var(--text-primary)]">{title}</h1>
         <p className="mt-2 text-body text-[var(--text-secondary)]">
@@ -81,7 +84,7 @@ export default function Setup({ onComplete, title = 'Set up your cycle' }) {
             value={lastPeriod}
             max={today}
             onChange={(e) => setLastPeriod(e.target.value)}
-            className="mt-3 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-white px-4 py-3.5 text-body text-[var(--text-primary)] shadow-[var(--shadow-soft)] transition focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-100"
+            className="glass-input mt-3 w-full rounded-[var(--radius-sm)] px-4 py-3.5 text-body text-[var(--text-primary)] transition focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-white/50"
           />
         </div>
 
@@ -99,7 +102,7 @@ export default function Setup({ onComplete, title = 'Set up your cycle' }) {
             max={CYCLE_LENGTH_MAX}
             value={avgCycleLength}
             onChange={(e) => setAvgCycleLength(e.target.value)}
-            className="mt-3 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-white px-4 py-3.5 text-body text-[var(--text-primary)] shadow-[var(--shadow-soft)] transition focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-100"
+            className="glass-input mt-3 w-full rounded-[var(--radius-sm)] px-4 py-3.5 text-body text-[var(--text-primary)] transition focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-white/50"
           />
           <div className="mt-3 flex gap-2">
             {[21, 28, 30, 35].map((n) => (
@@ -109,8 +112,8 @@ export default function Setup({ onComplete, title = 'Set up your cycle' }) {
                 onClick={() => setAvgCycleLength(n)}
                 className={`rounded-full px-4 py-2 text-caption font-semibold transition ${
                   Number(avgCycleLength) === n
-                    ? 'bg-rose-500 text-white shadow-[var(--shadow-soft)]'
-                    : 'bg-white text-[var(--text-secondary)] ring-1 ring-[var(--border)] hover:ring-rose-200'
+                    ? 'glass-button text-white'
+                    : 'glass text-[var(--text-secondary)] hover:bg-white/50'
                 }`}
               >
                 {n} days
@@ -120,16 +123,16 @@ export default function Setup({ onComplete, title = 'Set up your cycle' }) {
         </div>
 
         {error && (
-          <p className="rounded-[var(--radius-sm)] bg-[var(--accent-soft)] px-4 py-3 text-caption text-rose-600">{error}</p>
+          <p className="glass-card rounded-[var(--radius-sm)] px-4 py-3 text-caption text-[var(--accent-deep)]">{error}</p>
         )}
         {status && (
-          <p className="text-caption text-rose-600">{status}</p>
+          <p className="text-caption text-[var(--accent-deep)]">{status}</p>
         )}
 
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-[var(--radius-lg)] bg-gradient-to-br from-rose-500 to-rose-600 py-4 text-body font-semibold text-white shadow-[var(--shadow-card)] transition hover:from-rose-600 hover:to-rose-700 disabled:opacity-70 active:scale-[0.99]"
+          className="glass-button w-full rounded-[var(--radius-lg)] py-4 text-body font-semibold text-white transition hover:opacity-90 disabled:opacity-70 active:scale-[0.99]"
         >
           {saving ? 'Saving…' : 'Save'}
         </button>

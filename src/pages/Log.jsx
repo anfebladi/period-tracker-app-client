@@ -84,15 +84,15 @@ export default function Log() {
         <button
           type="button"
           onClick={handlePeriodClick}
-          className="w-full rounded-[var(--radius-lg)] bg-gradient-to-br from-rose-500 to-rose-600 py-4 text-body font-semibold text-white shadow-[var(--shadow-card)] transition hover:from-rose-600 hover:to-rose-700 active:scale-[0.99]"
+          className="glass-button w-full rounded-[var(--radius-lg)] py-4 text-body font-semibold text-white transition hover:opacity-90 active:scale-[0.99]"
         >
           I got my period today
         </button>
         {periodStatus && (
-          <p className="mt-3 text-center text-caption text-rose-600">{periodStatus}</p>
+          <p className="mt-3 text-center text-caption text-[var(--accent-deep)]">{periodStatus}</p>
         )}
         {periodError && (
-          <p className="mt-3 text-center text-caption text-rose-600">{periodError}</p>
+          <p className="mt-3 text-center text-caption text-[var(--accent-deep)]">{periodError}</p>
         )}
       </section>
 
@@ -102,7 +102,7 @@ export default function Log() {
         </h2>
         <form
           onSubmit={handleSymptomSubmit}
-          className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-soft)]"
+          className="glass-card rounded-[var(--radius-lg)] p-5"
         >
           <label className="text-label block text-[var(--text-muted)]">
             Symptom or feeling
@@ -110,7 +110,7 @@ export default function Log() {
           <select
             value={symptomName}
             onChange={(e) => setSymptomName(e.target.value)}
-            className="mt-3 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-app)] px-4 py-3.5 text-body text-[var(--text-primary)] transition focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-100"
+            className="glass-input mt-3 w-full rounded-[var(--radius-sm)] px-4 py-3.5 text-body text-[var(--text-primary)] transition focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-white/50"
           >
             {SYMPTOM_OPTIONS.map((opt) => (
               <option key={opt.value || 'empty'} value={opt.value}>
@@ -129,8 +129,8 @@ export default function Log() {
                 onClick={() => setSeverity(opt.value)}
                 className={`rounded-full px-4 py-2.5 text-caption font-semibold transition ${
                   severity === opt.value
-                    ? 'bg-rose-500 text-white shadow-[var(--shadow-soft)]'
-                    : 'bg-[var(--bg-app)] text-[var(--text-secondary)] ring-1 ring-[var(--border)] hover:ring-rose-200'
+                    ? 'bg-[var(--accent)] text-white shadow-[var(--shadow-soft)]'
+                    : 'bg-[var(--bg-app)] text-[var(--text-secondary)] ring-1 ring-[var(--border)] hover:ring-[var(--accent-soft)]'
                 }`}
               >
                 {opt.label}
@@ -139,15 +139,15 @@ export default function Log() {
           </div>
           <button
             type="submit"
-            className="mt-6 w-full rounded-[var(--radius-sm)] bg-rose-500 py-3.5 text-body font-semibold text-white transition hover:bg-rose-600 active:scale-[0.99]"
+            className="glass-button mt-6 w-full rounded-[var(--radius-sm)] py-3.5 text-body font-semibold text-white transition hover:opacity-90 active:scale-[0.99]"
           >
             Log feeling
           </button>
           {symptomStatus && (
-            <p className="mt-3 text-center text-caption text-rose-600">{symptomStatus}</p>
+            <p className="mt-3 text-center text-caption text-[var(--accent-deep)]">{symptomStatus}</p>
           )}
           {symptomError && (
-            <p className="mt-3 text-center text-caption text-rose-600">{symptomError}</p>
+            <p className="mt-3 text-center text-caption text-[var(--accent-deep)]">{symptomError}</p>
           )}
         </form>
       </section>

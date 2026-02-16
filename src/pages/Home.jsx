@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api.js';
+import { ChartIcon, FlowerIcon, CalendarIcon, DropletIcon, SparkleIcon } from '../components/NavIcons.jsx';
 
 const TREND_POPUP_KEY = 'trend_popup_seen';
 
@@ -44,7 +45,15 @@ export default function Home() {
         if (predictionsResult.status === 'fulfilled') setPredictions(predictionsResult.value.data);
         const failed = results.filter((r) => r.status === 'rejected');
         if (failed.length > 0 && periodResult.status !== 'fulfilled') {
-          setError(failed[0].reason?.response?.data?.error ?? failed[0].reason?.message ?? 'Could not load data.');
+          const err = failed[0].reason;
+          const status = err?.response?.status;
+          const msg = err?.response?.data?.error ?? err?.message ?? 'Could not load data.';
+          const hint = status === 500
+            ? ' Make sure the backend is running (node app.js in period-tracker-app) and on the same network.'
+            : status >= 500 || !err?.response
+              ? ' Ensure the backend is running on your computer.'
+              : '';
+          setError(msg + hint);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -88,7 +97,16 @@ export default function Home() {
   if (error) {
     return (
       <div className="mx-auto min-h-full max-w-lg px-6 pt-8 pb-8">
-        <p className="rounded-[var(--radius-sm)] bg-[var(--accent-soft)] px-4 py-3 text-caption text-rose-600">{error}</p>
+        <div className="glass-card rounded-[var(--radius-lg)] p-5 space-y-4">
+          <p className="text-body text-[var(--text-secondary)]">{error}</p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="glass-button w-full rounded-[var(--radius-sm)] py-3 text-body font-semibold text-white"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
@@ -104,18 +122,18 @@ export default function Home() {
           onClick={closeTrendPopup}
         >
           <div
-            className="relative max-w-sm rounded-[var(--radius-xl)] bg-white p-6 shadow-[var(--shadow-card)]"
+            className="glass-card relative max-w-sm rounded-[var(--radius-xl)] p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={closeTrendPopup}
-              className="absolute right-3 top-3 rounded-full p-2 text-[var(--text-muted)] transition hover:bg-[var(--accent-soft)] hover:text-rose-500"
+              className="absolute right-3 top-3 rounded-full p-2 text-[var(--text-muted)] transition hover:bg-white/30 hover:text-[var(--accent)]"
               aria-label="Close"
             >
               ✕
             </button>
-            <div className="mb-3 text-2xl">📊</div>
+            <div className="mb-3 text-[var(--accent)]"><ChartIcon className="w-8 h-8" /></div>
             <h2 id="trend-title" className="text-title text-[var(--text-primary)]">
               Your trend
             </h2>
@@ -125,7 +143,7 @@ export default function Home() {
             <button
               type="button"
               onClick={closeTrendPopup}
-              className="mt-6 w-full rounded-[var(--radius-sm)] bg-rose-500 py-3 text-body font-semibold text-white transition hover:bg-rose-600 active:scale-[0.99]"
+              className="glass-button mt-6 w-full rounded-[var(--radius-sm)] py-3 text-body font-semibold text-white transition hover:opacity-90 active:scale-[0.99]"
             >
               Got it
             </button>
@@ -142,14 +160,14 @@ export default function Home() {
             {phase ?? '—'}
           </h1>
         </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-xl shadow-[var(--shadow-soft)] ring-1 ring-[var(--border)]">
-          ✨
+        <div className="glass flex h-12 w-12 items-center justify-center rounded-full text-[var(--accent)]">
+          <SparkleIcon />
         </div>
       </header>
 
       <section className="mb-12 flex flex-col items-center">
-        <div className="relative flex h-56 w-56 flex-col items-center justify-center rounded-full border-[14px] border-rose-100/70 bg-white shadow-[var(--shadow-soft)] ring-2 ring-white">
-          <div className="absolute inset-0 rounded-full border-[14px] border-transparent border-t-rose-200 border-r-rose-100 -rotate-45" />
+        <div className="glass-card relative flex h-56 w-56 flex-col items-center justify-center rounded-full border-[14px] border-white/40">
+          <div className="absolute inset-0 rounded-full border-[14px] border-transparent border-t-white/50 border-r-white/30 -rotate-45" />
           <span className="text-label text-[var(--text-muted)]">
             Day
           </span>
@@ -157,7 +175,7 @@ export default function Home() {
             {dayInCycle ?? '—'}
           </span>
           {isFertile && (
-            <span className="mt-2 rounded-full bg-[var(--accent-soft)] px-3 py-1 text-label text-rose-500">
+            <span className="glass mt-2 rounded-full px-3 py-1 text-label text-[var(--accent-deep)]">
               Fertile window
             </span>
           )}
@@ -165,7 +183,7 @@ export default function Home() {
       </section>
 
       <section className="mb-8">
-        <div className="flex items-center justify-between rounded-[var(--radius-xl)] bg-gradient-to-br from-rose-500 to-rose-600 px-6 py-6 text-white shadow-[var(--shadow-card)]">
+        <div className="glass-button flex items-center justify-between rounded-[var(--radius-xl)] px-6 py-6 text-white">
           <div>
             <p className="text-label opacity-90">
               Next period
@@ -182,7 +200,7 @@ export default function Home() {
           </div>
           <Link
             to="/calendar"
-            className="rounded-full bg-white/20 px-4 py-2.5 text-caption font-semibold transition hover:bg-white/30 active:scale-[0.98]"
+            className="glass rounded-full px-4 py-2.5 text-caption font-semibold transition hover:bg-white/40 active:scale-[0.98]"
           >
             Details
           </Link>
@@ -190,19 +208,19 @@ export default function Home() {
       </section>
 
       <section className="grid grid-cols-2 gap-4">
-        <StatCard label="Phase" value={phase ?? '—'} icon="🌸" />
-        <StatCard label="Cycle day" value={dayInCycle != null ? String(dayInCycle) : '—'} icon="📅" />
-        <StatCard label="Next period" value={daysToNext != null ? (daysToNext > 0 ? `${daysToNext}d` : 'Soon') : '—'} icon="💧" />
-        <StatCard label="Trends" value={hasTrend ? 'Available' : '—'} icon="📊" />
+        <StatCard label="Phase" value={phase ?? '—'} Icon={FlowerIcon} />
+        <StatCard label="Cycle day" value={dayInCycle != null ? String(dayInCycle) : '—'} Icon={CalendarIcon} />
+        <StatCard label="Next period" value={daysToNext != null ? (daysToNext > 0 ? `${daysToNext}d` : 'Soon') : '—'} Icon={DropletIcon} />
+        <StatCard label="Trends" value={hasTrend ? 'Available' : '—'} Icon={ChartIcon} />
       </section>
     </div>
   );
 }
 
-function StatCard({ label, value, icon }) {
+function StatCard({ label, value, Icon }) {
   return (
-    <div className="flex flex-col gap-2.5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-white p-4 text-left shadow-[var(--shadow-soft)]">
-      <span className="text-xl" aria-hidden>{icon}</span>
+    <div className="glass-card flex flex-col gap-2.5 rounded-[var(--radius-lg)] p-4 text-left">
+      <span className="text-[var(--accent)]" aria-hidden><Icon /></span>
       <div>
         <p className="text-label text-[var(--text-muted)]">{label}</p>
         <p className="mt-0.5 text-body font-semibold text-[var(--text-primary)]">{value}</p>

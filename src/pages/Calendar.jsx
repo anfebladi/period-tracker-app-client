@@ -104,7 +104,7 @@ export default function Calendar() {
   if (error) {
     return (
       <div className="mx-auto min-h-full max-w-lg px-6 pt-8 pb-8">
-        <p className="rounded-[var(--radius-sm)] bg-[var(--accent-soft)] px-4 py-3 text-caption text-rose-600">{error}</p>
+        <p className="glass-card rounded-[var(--radius-sm)] px-4 py-3 text-caption text-[var(--accent-deep)]">{error}</p>
       </div>
     );
   }
@@ -121,7 +121,7 @@ export default function Calendar() {
           <button
             type="button"
             onClick={prevMonth}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:bg-[var(--accent-soft)] hover:text-rose-500"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:bg-white/40 hover:text-[var(--accent)]"
             aria-label="Previous month"
           >
             ←
@@ -132,7 +132,7 @@ export default function Calendar() {
           <button
             type="button"
             onClick={nextMonth}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:bg-[var(--accent-soft)] hover:text-rose-500"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:bg-white/40 hover:text-[var(--accent)]"
             aria-label="Next month"
           >
             →
@@ -155,9 +155,9 @@ export default function Calendar() {
               <div
                 key={cell.key}
                 className={`flex aspect-square items-center justify-center rounded-[var(--radius-sm)] text-body font-medium transition
-                  ${isPredicted ? 'bg-rose-500 text-white' : 'text-[var(--text-primary)]'}
-                  ${isToday && !isPredicted ? 'ring-2 ring-rose-400' : ''}
-                  ${isToday && isPredicted ? 'ring-2 ring-white ring-offset-2 ring-offset-rose-500' : ''}
+                  ${isPredicted ? 'bg-[var(--accent)] text-white' : 'text-[var(--text-primary)]'}
+                  ${isToday && !isPredicted ? 'ring-2 ring-[var(--accent)]' : ''}
+                  ${isToday && isPredicted ? 'ring-2 ring-white ring-offset-2 ring-offset-[var(--accent)]' : ''}
                 `}
               >
                 {cell.day}
@@ -166,7 +166,7 @@ export default function Calendar() {
           })}
         </div>
         <p className="mt-5 text-center text-caption text-[var(--text-muted)]">
-          <span className="inline-block h-3 w-3 rounded-full bg-rose-500 align-middle" /> Predicted period
+          <span className="inline-block h-3 w-3 rounded-full bg-[var(--accent)] align-middle" /> Predicted period
         </p>
       </section>
     </div>
