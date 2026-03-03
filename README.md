@@ -1,17 +1,45 @@
-# Period Tracker App - Frontend
+# Rhythm – Frontend
 
-React + Vite frontend for the period tracker. Connects to the backend API for all data.
+Backend Repository: https://github.com/anfebladi/period-tracker-app
 
-## Run both client and server
+Frontend application for **Rhythm**, a privacy-first menstrual health tracking app.  
+This client provides an intuitive interface for logging cycles and symptoms, viewing predictions, generating medical reports, and interacting with the AI health assistant.
 
-1. **Backend** (must run first):  
-   - Open a terminal  
-   - `cd period-tracker-app` (or wherever the backend repo is)  
-   - Set `.env` with `DATABASE_URL` and optionally `GEMINI_API_KEY`  
-   - `node app.js` (listens on port 3000)
+<a href="https://ibb.co/tTJc4MND"><img src="https://i.ibb.co/9kr2N9fW/Screenshot-2026-02-15-204141.png" alt="Screenshot 2026 02 15 204141" border="0"></a>
 
-2. **Frontend**:  
-   - In another terminal: `npm run dev`  
-   - Vite proxies `/api` to `http://localhost:3000`
+---
 
-All data is fetched from the backend via axios and `useEffect`. No static or hardcoded data.
+## Tech Stack
+
+- **React.js**
+- **CSS
+
+---
+
+## Features
+
+### 📅 Cycle & Symptom Tracking
+- Log menstrual cycles and daily symptoms
+- Clean dashboard view of historical entries
+- Visual trend insights based on backend predictions
+
+### 📊 Cycle Predictions
+- Display predicted cycle lengths and upcoming dates
+- Simple visual summaries of trends
+
+### 📄 PDF Report Generation
+- One-click generation of professional cycle history reports
+- Download and share with healthcare providers
+
+### 🤖 AI Health Assistant
+- Chat-style interface powered by Gemini (via backend)
+- Personalized menstrual health insights
+- Answers common health-related questions
+
+### 🔐 Privacy-First Experience
+- Temporary randomized token authentication
+- No personal account or email required
+- Seamless anonymous session handling
+
+## Project Structure
+
