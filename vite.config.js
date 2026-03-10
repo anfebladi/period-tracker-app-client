@@ -9,7 +9,7 @@ export default defineConfig({
     host: true, // listen on 0.0.0.0 so you can access from phone on same Wi-Fi
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:5000',
         changeOrigin: true,
       },
     },

@@ -10,6 +10,7 @@ import Insights from './pages/Insights';
 import Settings from './pages/Settings';
 import Onboarding from './pages/Onboarding';
 import { isNewUser } from './context/AuthContext.jsx';
+import Amazon from './pages/amazon.jsx';
 
 function AppContent() {
   const [showOnboarding, setShowOnboarding] = useState(isNewUser);
@@ -49,6 +50,7 @@ function AppContent() {
             <Route path="onboarding" element={<Onboarding />} />
             <Route path="insights" element={<Insights />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="amazon" element={<Amazon />} />
           </Route>
         </Routes>
       )}

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getStoredToken } from './context/AuthContext.jsx';
 
 const api = axios.create({
-  baseURL: '/api/',
+  baseURL: '/api',
   timeout: 10000,
 });
 
